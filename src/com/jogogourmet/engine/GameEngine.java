@@ -43,7 +43,6 @@ public class GameEngine {
 
 	public void start(Dish root) {
 		boolean isPlaying = true;
-		boolean dishFound = false;
 		while (isPlaying) {
 
 			String dishCategory = "";
@@ -55,9 +54,7 @@ public class GameEngine {
 
 			exitMessage(panelAnswer);
 
-			dishFound = findDish(root);
-
-			if (dishFound) {
+			if (findDish(root)) {
 				panelAnswer = JOptionPane.showOptionDialog(null, "Eu venci dessa vez!",
 						JOptionPaneUtils.GAME_NAME_TITLE, JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
 						JOptionPaneUtils.OK_OPTION, JOptionPaneUtils.OK_OPTION[0]);
@@ -68,21 +65,9 @@ public class GameEngine {
 				continue;
 			}
 
-			while (dish == null || dish.isEmpty() || dish.isBlank()) {
-				dish = JOptionPane.showInputDialog(null, "* Qual prato é?", JOptionPaneUtils.GIVE_UP_TITLE,
-						JOptionPane.QUESTION_MESSAGE);
-
-				exitMessage(dish);
-			}
-
-			while (dishCategory == null || dishCategory.isEmpty() || dishCategory.isBlank()) {
-				dishCategory = JOptionPane.showInputDialog(null,
-						"* O que ele é que o " + lastDish.getDishes().get(lastDishIndex) + " não é?",
-						JOptionPaneUtils.GIVE_UP_TITLE, JOptionPane.QUESTION_MESSAGE);
-
-				exitMessage(dishCategory);
-			}
-
+			dish = requiredInputLoop("* Qual prato é?");
+			dishCategory =  requiredInputLoop("* O que ele é que o " + lastDish.getDishes().get(lastDishIndex) + " não é?");
+			
 			Dish newDish = new Dish(dishCategory, dish);
 
 			lastDish.addDishCategory(newDish);
@@ -90,6 +75,17 @@ public class GameEngine {
 		}
 	}
 
+	private String requiredInputLoop(String message) {
+		String item = "";
+		while (item == null || item.isEmpty() || item.isBlank()) {
+			item = JOptionPane.showInputDialog(null, message, JOptionPaneUtils.GIVE_UP_TITLE,
+					JOptionPane.QUESTION_MESSAGE);
+
+			exitMessage(item);
+		}
+		return item;
+	}
+	
 	private void exitMessage(String answer) {
 		if (answer == null)
 			exitMessage();
